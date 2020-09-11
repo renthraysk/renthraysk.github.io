@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Waveform</title>
+	<style>
+		body { background: #000 }
+		canvas { border: 1px solid #222; }
+	</style>
+	<script>
+		
+		function getY(c, s) {
+			switch (c) {
+				case "L":
+					return -s
+				case "M":
+					return 0
+				case "H":
+					return s
+			}
+		}
+		
+		function draw(value) {
+			const width = 20
+			const canvas = document.getElementById("canvas")
+			const ctx = canvas.getContext("2d")
+			const yScale = canvas.height/2
+			
+			ctx.resetTransform()
+			ctx.clearRect(0, 0, canvas.width, canvas.height)
+			ctx.translate(0, yScale)
+			ctx.scale(1, -1)
+			ctx.lineWidth = 2
+			ctx.strokeStyle = "#fff"
+			
+			let x = width
+			let y = getY(value[0], yScale)
+			ctx.beginPath()
+			ctx.moveTo(0, y)
+			ctx.lineTo(x, y)
+			for (const v of value.slice(1)) {
+				const y2 = getY(v, yScale)
+				if (y != y2) {
+					y = y2
+					ctx.lineTo(x, y)
+				}
+				x += width
+				ctx.lineTo(x, y)
+			}
+			ctx.stroke()
+			ctx.closePath()
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="800" height="200"></canvas>
+	<div>
+		<textarea>LMHLMHHMHLMHLHLM</textarea>
+		<button onclick="draw(this.previousElementSibling.value)">Draw</button>
+	</div>
+</body>
+</html>
